@@ -12,7 +12,7 @@ public class Driver {
 	public static void main(String[] args) {
 		PRManager pr = new PRManager();
 		Parser p = new Parser(pr);
-		p.initialize();
+		p.start();
 	}
 
 }

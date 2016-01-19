@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-// Handles all I/O
+// Handles most of the I/O
 
 public class Parser {
 	
@@ -14,55 +14,110 @@ public class Parser {
 	
 	private BufferedReader bufferedReader;
 	
-	private PRManager processResourceManager;
+	private PRManager prManager; // Process and Resource Manager
 	
 	
 	public Parser(PRManager pr){
-		processResourceManager = pr;
+		prManager = pr;
 	}
 	
-	public void initialize(){
-		int input;
-		boolean inputLoop = true;
-		Scanner in = new Scanner(System.in);
-		while (inputLoop){
-			System.out.println("Read from file [1]. Input through command line [2]");
-			input = in.nextInt();
-			if (input == 1){
-				terminalInput();
-				inputLoop = false;
+	public void start(){
+		boolean running = true;
+		while (running){
+			Scanner in = new Scanner(System.in);
+			int input;
+			System.out.println("Input through console [1]. Read from file [2].");
+			System.out.print(">> ");
+			try{
+				input = in.nextInt();
+				if (input == 1){
+					consoleInput();
+					running = false;
+				}
+				else if (input == 2){
+					fileInput();
+					running = false;
+				}
+				else{
+					System.out.println("Please input 1 or 2.\n");
+				}
 			}
-			else if (input == 2){
-				fileInput();
-				inputLoop = false;
+			catch (Exception e){
+				System.out.println("Please input a digit.\n");
+				continue;
+				
 			}
 		}
 	}
 	
-	public void terminalInput(){
+	public void consoleInput(){
 		String input = "";
-		Scanner in = new Scanner(System.in);
-		while (input != "quit"){
-			input = in.nextLine();
-			String[] arr = input.split(" ");
-			
-			if (arr[0] == "cr" && arr.length == 3 && (arr[2] == "1" || arr[2] == "2")){
-				cr(arr);
+		boolean running = true;
+		while (running){
+			Scanner in = new Scanner(System.in);
+			try{
+				System.out.print("shell> ");
+				input = in.nextLine();
+				String[] arr = input.split(" ");
+				if (arr[0].equals("init")){
+					init();
+				}
+				else if (arr[0].equals("cr") && arr.length == 3 && (arr[2].equals("0") || arr[2].equals("1") || arr[2].equals("2"))){
+					cr(arr[1], arr[2]);
+				}
+				else if(arr[0].equals("de") && arr.length == 2){
+					de(arr[1]);
+				}
+				else if(arr[0].equals("req") && arr.length == 3){
+					if (arr[1].equals("R1") && arr[2].equals("1")){
+						req(arr[1], arr[2]);
+					}
+					else if (arr[1].equals("R2") && (arr[2].equals("1") || arr[2].equals("2"))){
+						req(arr[1], arr[2]);
+					}
+					else if (arr[1].equals("R3") && (arr[2].equals("1") || arr[2].equals("2") || arr[2].equals("3"))){
+						req(arr[1], arr[2]);
+					}
+					else if (arr[1].equals("R4") && (arr[2].equals("1") || arr[2].equals("2") || arr[2].equals("3") || arr[2].equals("4"))){
+						req(arr[1], arr[2]);
+					}
+					else{
+						System.out.println("Invalid request input.");
+					}
+				}
+				else if(arr[0].equals("rel") && arr.length == 3){
+					if (arr[1].equals("R1") && arr[2].equals("1")){
+						rel(arr[1], arr[2]);
+					}
+					else if (arr[1].equals("R2") && (arr[2].equals("1") || arr[2].equals("2"))){
+						rel(arr[1], arr[2]);
+					}
+					else if (arr[1].equals("R3") && (arr[2].equals("1") || arr[2].equals("2") || arr[3].equals("3"))){
+						rel(arr[1], arr[2]);
+					}
+					else if (arr[1].equals("R4") && (arr[2].equals("1") || arr[2].equals("2") || arr[2].equals("3") || arr[2].equals("4"))){
+						rel(arr[1], arr[2]);
+					}
+					else{
+						System.out.println("Invalid input release input.");
+					}
+				}
+				else if(arr[0].equals("to") && arr.length == 1){
+					to(arr);
+				}
+				else if (input.equals("quit")){
+					running = false;
+				}
+				else{
+					System.out.println("Invalid input.");
+					input = "";
+				}
 			}
-			else if(arr[0] == "de" && arr.length == 2){
-				de(arr);
-			}
-			else if(arr[0] == "req" && arr.length == 3){
-				req(arr);
-			}
-			else if(arr[0] == "rel" && arr.length == 3){
-				rel(arr);
-			}
-			else if(arr[0] == "to" && arr.length == 1){
-				to(arr);
-			}
-			else{
-				System.out.println("Invalid input.");
+			catch (Exception e){
+				
+				//System.out.println("Please input a valid statement.");
+				e.printStackTrace();
+				continue;
 			}
 		}
 	}
@@ -71,18 +126,25 @@ public class Parser {
 		
 	}
 	
-	public void cr(String[] input){
-		
+	public void init(){
+		start();
 	}
 	
-	public void de(String[] input){
-		
+	public void cr(String name, String priority){
+		int p = Integer.parseInt(priority);
+		prManager.create(name, p);
 	}
 	
-	public void req(String[] input){
-		
+	public void de(String name){
+		prManager.destroy(name);
 	}
-	public void rel(String[] input){
+	
+	public void req(String id, String units){
+		int rid = Integer.parseInt(id);
+		int u = Integer.parseInt(units);
+		prManager.request(rid, u);
+	}
+	public void rel(String id, String units){
 		
 	}
 	
