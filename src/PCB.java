@@ -6,7 +6,6 @@ import java.util.Queue;
 // Encapsulates a process
 
 public class PCB {
-	private int id;
 	private String name;
 	private ArrayList<RCB> resources;
 	private String type;
@@ -15,8 +14,7 @@ public class PCB {
 	private PCB parent;
 	private ArrayList<PCB> children;
 	
-	public PCB(int id, String name, String type, ArrayList<ArrayList<PCB>> readyList, int priority, PCB parent){
-		this.id = id;
+	public PCB(String name, String type, ArrayList<ArrayList<PCB>> readyList, int priority, PCB parent){
 		this.name = name;
 		this.type = type;
 		this.readyList = readyList;
@@ -42,6 +40,10 @@ public class PCB {
 		return parent;
 	}
 	
+	public ArrayList<RCB> getResources(){
+		return resources;
+	}
+	
 	public ArrayList<PCB> getChildren(){
 		return children;
 	}
@@ -54,9 +56,38 @@ public class PCB {
 		resources.add(resource);
 	}
 	
+	public void removeResource(RCB resource){
+		resources.remove(resource);
+	}
+	
 	public void setType(String type){
 		this.type = type;
 	}
 	
+	public void scheduler(){
+		PCB highestPriority = findHighestPriority();
+
+		if (this.priority < highestPriority.getPriority() || 
+				this.type != "running" ||
+				this != null){
+			preempt(highestPriority);
+		}
+	}
+	
+	public PCB findHighestPriority(){
+		PCB highestPriority = null;
+		for (int i = 0; i < readyList.size(); i++){
+			if (readyList.get(i).size() > 0){
+				highestPriority = readyList.get(i).get(0);
+			}
+		}
+		return highestPriority;
+	}
+	
+	public void preempt(PCB highestPriority){
+		highestPriority.setType("running");
+		System.out.println("*Process " + highestPriority.getName() + 
+				" is running");
+	}
 	
 }

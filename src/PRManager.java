@@ -6,7 +6,6 @@ import java.util.Queue;
 public class PRManager {
 	
 	private ArrayList<ArrayList<PCB>> readyList;
-	private ArrayList<PCB> waitingList;
 
 	RCB R1;
 	RCB R2;
@@ -21,41 +20,69 @@ public class PRManager {
 			ArrayList<PCB> priorityList = new ArrayList<PCB>();
 			readyList.add(priorityList);
 		}
-		
 		create("Init", 0);
-		
-		waitingList = new ArrayList<PCB>();
 	}
 	
 	public void create(String name, int priority){
-		int id = readyList.size() + waitingList.size() + 1;
-		PCB process = new PCB(id, name, "ready", readyList, priority, runningProcess);
-		if (runningProcess != null){
+		PCB process = new PCB(name, "ready", readyList, priority, runningProcess);
+		if (process.getName() != "Init"){
 			runningProcess.addChild(process);
 		}
+		else{
+			runningProcess = process;
+		}
 		readyList.get(priority).add(process);
-		scheduler(process);
+		
+		runningProcess.scheduler();
 		
 	}
 	
 	public void destroy(String name){
-		
+		PCB pcb = getPCB(name);
+		killTree(pcb);
+		runningProcess.scheduler();
 	}
 	
-	public void killTree(PCB p){
+	public void killTree(PCB pcb){
+		for (int i = 0; i < pcb.getResources().size(); i++){
+			
+		}
 		
 	}
 	
 	public void request(int rid, int units){
 		RCB rcb = getRCB(rid);
-		if (rcb.getStatus() == "free"){
-			rcb.setStatus("allocated");
+		if (rcb.getStatus() == "free" && rcb.getAvailableUnits() >= units){
+			rcb.decrAvailableUnits(units);
 			runningProcess.addResource(rcb);
+			if (rcb.getAvailableUnits() == 0){
+				rcb.setStatus("allocated");
+			}
 		}
 		else{
 			runningProcess.setType("blocked");
-			runningProcess.
+			readyList.remove(runningProcess);
+			rcb.addToWaitingList(runningProcess);
+			runningProcess.scheduler();
 		}
+	}
+	
+	public void release(int rid){
+		RCB rcb = getRCB(rid);
+		runningProcess.removeResource(rcb);
+	}
+	
+	public PCB getPCB(String name){
+		PCB pcb = null;
+		for (int i = 0; i < readyList.size(); i++){
+			for (int j = 0; j < readyList.get(i).size(); j++){
+				if (readyList.get(i).get(j).getName() == name){
+					pcb = readyList.get(i).get(j);
+					return pcb;
+				}
+			}
+		}
+		return pcb;
 	}
 	
 	public RCB getRCB(int rid){
@@ -75,31 +102,11 @@ public class PRManager {
 		return resource;
 	}
 	
-	public void release(){
-		
-	}
 	
 	public void timeOut(){
 		
 	}
 	
-	public void scheduler(PCB process){
-		
-		
-		if (process.getPriority() < runningProcess.getPriority() || 
-					process.getType() != "running" ||
-					process == null){
-				preempt(runningProcess, process);
-		}
-		System.out.println(runningProcess.getName());
-		System.out.println("scheduled");
-	}
-	
-	public void preempt(PCB running, PCB process){
-		
-	}
-	
-
 	
 
 	

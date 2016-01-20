@@ -8,11 +8,11 @@ public class RCB {
 	private String status;
 	private ArrayList<PCB> waitingList;
 	
-	public RCB(int id, ArrayList<PCB> waitingList){
+	public RCB(int id){
 		this.id = id;
 		this.availableUnits = id;
-		this.waitingList = waitingList;
 		this.status = "free";
+		waitingList = new ArrayList<PCB>();
 	}
 	
 	public int getId(){
@@ -28,8 +28,8 @@ public class RCB {
 	}
 	
 	
-	public void decrAvailableUnits(){
-		availableUnits --;
+	public void decrAvailableUnits(int units){
+		availableUnits -= units;
 	}
 	
 	public void addToWaitingList(PCB p){
