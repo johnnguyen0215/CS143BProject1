@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -7,7 +8,7 @@ import java.util.Queue;
 
 public class PCB {
 	private String name;
-	private ArrayList<RCB> resources;
+	private HashMap<RCB, Integer> resources;
 	private String type;
 	private ArrayList<ArrayList<PCB>> readyList;
 	private int priority;
@@ -20,7 +21,7 @@ public class PCB {
 		this.readyList = readyList;
 		this.priority = priority;
 		this.parent = parent;
-		resources = new ArrayList<RCB>();
+		resources = new HashMap<RCB, Integer>();
 		children = new ArrayList<PCB>();
 	}
 	
@@ -40,7 +41,7 @@ public class PCB {
 		return parent;
 	}
 	
-	public ArrayList<RCB> getResources(){
+	public HashMap<RCB, Integer> getResources(){
 		return resources;
 	}
 	
@@ -52,11 +53,12 @@ public class PCB {
 		children.add(child);
 	}
 	
-	public void addResource(RCB resource){
-		resources.add(resource);
+	public void addResource(RCB resource, int units){
+		resources.put(resource, units);
 	}
 	
 	public void removeResource(RCB resource){
+		resource.incAvailableUnits(resources.get(resource));
 		resources.remove(resource);
 	}
 	
@@ -64,30 +66,5 @@ public class PCB {
 		this.type = type;
 	}
 	
-	public void scheduler(){
-		PCB highestPriority = findHighestPriority();
-
-		if (this.priority < highestPriority.getPriority() || 
-				this.type != "running" ||
-				this != null){
-			preempt(highestPriority);
-		}
-	}
-	
-	public PCB findHighestPriority(){
-		PCB highestPriority = null;
-		for (int i = 0; i < readyList.size(); i++){
-			if (readyList.get(i).size() > 0){
-				highestPriority = readyList.get(i).get(0);
-			}
-		}
-		return highestPriority;
-	}
-	
-	public void preempt(PCB highestPriority){
-		highestPriority.setType("running");
-		System.out.println("*Process " + highestPriority.getName() + 
-				" is running");
-	}
 	
 }

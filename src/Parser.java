@@ -17,8 +17,7 @@ public class Parser {
 	private PRManager prManager; // Process and Resource Manager
 	
 	
-	public Parser(PRManager pr){
-		prManager = pr;
+	public Parser(){
 	}
 	
 	public void start(){
@@ -51,6 +50,7 @@ public class Parser {
 	}
 	
 	public void consoleInput(){
+		prManager = new PRManager();
 		String input = "";
 		boolean running = true;
 		while (running){
