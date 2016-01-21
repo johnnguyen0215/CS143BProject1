@@ -22,6 +22,11 @@ public class PRManager {
 			ArrayList<PCB> priorityList = new ArrayList<PCB>();
 			readyList.add(priorityList);
 		}
+		
+		R1 = new RCB("R1");
+		R2 = new RCB("R2");
+		R3 = new RCB("R3");
+		R4 = new RCB("R4");
 		create("Init", 0);
 	}
 	
@@ -46,23 +51,23 @@ public class PRManager {
 	}
 	
 	public void killTree(PCB pcb){
-		HashMap<RCB, Integer> resources = pcb.getResources();
-		for (RCB rcb : resources.keySet()){
-			rcb.getWL().remove(pcb);
+		if (pcb != null){
+			HashMap<RCB, Integer> resources = pcb.getResources();
+			for (RCB rcb : resources.keySet()){
+				rcb.getWL().remove(pcb);
+			}
+			
+			for (int i = 0; i < pcb.getChildren().size(); i++){
+				killTree(pcb.getChildren().get(i));
+			}
+			
+			pcb.removeFromRL();
 		}
-		
-		for (int i = 0; i < pcb.getChildren().size(); i++){
-			readyList.remove(pcb.getChildren().get(i));
-		}
-		
-		
-		
-		
 	}
 	
-	public void request(int rid, int units){
-		RCB rcb = getRCB(rid);
-		if (rcb.getStatus() == "free" && rcb.getAvailableUnits() >= units){
+	public void request(String resourceName, int units){
+		RCB rcb = getRCB(resourceName);
+		if (rcb.getStatus().equals("free") && rcb.getAvailableUnits() >= units){
 			rcb.decrAvailableUnits(units);
 			runningProcess.addResource(rcb, units);
 			if (rcb.getAvailableUnits() == 0){
@@ -72,15 +77,16 @@ public class PRManager {
 		else{
 			runningProcess.setType("blocked");
 			System.out.print(runningProcess.getName() +
-					" is blocked;");
-			readyList.remove(runningProcess);
+					" is blocked; ");
+			readyList.get(runningProcess.getPriority()).remove(runningProcess);
 			rcb.addToWaitingList(runningProcess, units);
-			scheduler();
 		}
+		scheduler();
 	}
 	
-	public void release(int rid){
-		RCB rcb = getRCB(rid);
+	public void release(String resourceName, int units){
+		RCB rcb = getRCB(resourceName);
+		
 		runningProcess.removeResource(rcb);
 		if (rcb.getWL().size() == 0 && rcb.getAvailableUnits() > 0){
 			rcb.setStatus("free");
@@ -104,7 +110,7 @@ public class PRManager {
 		PCB pcb = null;
 		for (int i = 0; i < readyList.size(); i++){
 			for (int j = 0; j < readyList.get(i).size(); j++){
-				if (readyList.get(i).get(j).getName() == name){
+				if (readyList.get(i).get(j).getName().equals(name)){
 					pcb = readyList.get(i).get(j);
 					return pcb;
 				}
@@ -113,18 +119,18 @@ public class PRManager {
 		return pcb;
 	}
 	
-	public RCB getRCB(int rid){
+	public RCB getRCB(String name){
 		RCB resource = null;
-		if (rid == 1){
+		if (name.equals("R1")){
 			resource = R1;
 		}
-		else if (rid == 2){
+		else if (name.equals("R2")){
 			resource = R2;
 		}
-		else if (rid == 3){
+		else if (name.equals("R3")){
 			resource = R3;
 		}
-		else if (rid == 4){
+		else if (name.equals("R4")){
 			resource = R4;
 		}
 		return resource;
@@ -132,14 +138,16 @@ public class PRManager {
 	
 	
 	public void timeOut(){
-		
+		readyList.get(runningProcess.getPriority()).remove(runningProcess);
+		runningProcess.setType("ready");
+		readyList.get(runningProcess.getPriority()).add(runningProcess);
+		scheduler();
 	}
 	
 	public void scheduler(){
 		PCB highestPriority = findHighestPriority();
-
 		if (runningProcess.getPriority() < highestPriority.getPriority() || 
-				runningProcess.getType() != "running" ||
+				!runningProcess.getType().equals("running") ||
 				runningProcess != null){
 			preempt(highestPriority);
 		}
@@ -157,7 +165,14 @@ public class PRManager {
 	
 	public void preempt(PCB highestPriority){
 		highestPriority.setType("running");
+		runningProcess = highestPriority;
 		System.out.println("*Process " + highestPriority.getName() + 
 				" is running");
+	}
+	
+	public void printProcesses(){
+		for (int i = 0; i < readyList.size(); i++){
+			
+		}
 	}
 }

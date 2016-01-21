@@ -103,7 +103,7 @@ public class Parser {
 					}
 				}
 				else if(arr[0].equals("to") && arr.length == 1){
-					to(arr);
+					to();
 				}
 				else if (input.equals("quit")){
 					running = false;
@@ -139,17 +139,17 @@ public class Parser {
 		prManager.destroy(name);
 	}
 	
-	public void req(String id, String units){
-		int rid = Integer.parseInt(id);
+	public void req(String resourceName, String units){
 		int u = Integer.parseInt(units);
-		prManager.request(rid, u);
+		prManager.request(resourceName, u);
 	}
-	public void rel(String id, String units){
-		
+	public void rel(String resourceName, String units){
+		int u = Integer.parseInt(units);
+		prManager.release(resourceName, u);
 	}
 	
-	public void to(String[] input){
-		
+	public void to(){
+		prManager.timeOut();
 	}
 	
 	

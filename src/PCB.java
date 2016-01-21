@@ -66,5 +66,8 @@ public class PCB {
 		this.type = type;
 	}
 	
+	public void removeFromRL(){
+		readyList.get(priority).remove(this);
+	}
 	
 }

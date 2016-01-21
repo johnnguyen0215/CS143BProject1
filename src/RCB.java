@@ -1,19 +1,33 @@
 import java.util.ArrayList;
-import java.util.TreeMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashMap;
 import java.util.Queue;
 
 
 public class RCB {
+	private String name;
 	private int id;
 	private int availableUnits;
 	private String status;
-	private TreeMap<PCB, Integer> waitingList;
+	private LinkedHashMap<PCB, Integer> waitingList;
 	
-	public RCB(int id){
-		this.id = id;
+	public RCB(String name){
+		this.name = name;
+		if (name == "R1"){
+			id = 1;
+		}
+		else if (name == "R2"){
+			id = 2;
+		}
+		else if (name == "R3"){
+			id = 3;
+		}
+		else if (name == "R4"){
+			id = 4;
+		}
 		this.availableUnits = id;
 		this.status = "free";
-		waitingList = new TreeMap<PCB, Integer>();
+		waitingList = new LinkedHashMap<PCB, Integer>();
 	}
 	
 	public int getId(){
@@ -29,7 +43,7 @@ public class RCB {
 		return status;
 	}
 	
-	public TreeMap<PCB, Integer> getWL(){
+	public LinkedHashMap<PCB, Integer> getWL(){
 		return waitingList;
 	}
 	
@@ -47,12 +61,12 @@ public class RCB {
 	}
 	
 	public PCB peakWL(){
-		return waitingList.firstKey();
+		return waitingList.keySet().iterator().next();
 	}
 	
 	public PCB popFromWL(){
 		PCB pcb;
-		pcb = waitingList.firstKey();
+		pcb = peakWL();
 		waitingList.remove(pcb);
 		return pcb;
 	}
