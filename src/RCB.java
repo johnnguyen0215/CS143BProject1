@@ -30,6 +30,10 @@ public class RCB {
 		waitingList = new LinkedHashMap<PCB, Integer>();
 	}
 	
+	public String getName(){
+		return name;
+	}
+	
 	public int getId(){
 		return id;
 	}
@@ -69,6 +73,13 @@ public class RCB {
 		pcb = peakWL();
 		waitingList.remove(pcb);
 		return pcb;
+	}
+	
+	public void removeProcess(PCB pcb){
+		System.out.println("removing process");
+		System.out.println(pcb.getResources().get(this));
+		incAvailableUnits(pcb.getResources().get(this));
+		waitingList.remove(pcb);
 	}
 	
 	public void setStatus(String status){

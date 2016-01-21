@@ -9,10 +9,10 @@ public class PRManager {
 	
 	private ArrayList<ArrayList<PCB>> readyList;
 
-	RCB R1;
-	RCB R2;
-	RCB R3;
-	RCB R4;
+	private RCB R1;
+	private RCB R2;
+	private RCB R3;
+	private RCB R4;
 
 	private PCB runningProcess = null;
 	
@@ -54,7 +54,7 @@ public class PRManager {
 		if (pcb != null){
 			HashMap<RCB, Integer> resources = pcb.getResources();
 			for (RCB rcb : resources.keySet()){
-				rcb.getWL().remove(pcb);
+				rcb.removeProcess(pcb);
 			}
 			
 			for (int i = 0; i < pcb.getChildren().size(); i++){
@@ -171,8 +171,47 @@ public class PRManager {
 	}
 	
 	public void printProcesses(){
-		for (int i = 0; i < readyList.size(); i++){
-			
+		System.out.println("Processes... ");
+		for (ArrayList<PCB> arr : readyList){
+			for (PCB pcb : arr){
+				System.out.println("Name: " + pcb.getName());
+				System.out.println("Type: " + pcb.getType());
+				System.out.println("Priority: " + pcb.getPriority());
+				System.out.print("Resources: ");
+				for (RCB rcb: pcb.getResources().keySet()){
+					System.out.println(rcb.getName() + ", ");
+				}
+				if (pcb.getName() != "Init"){
+					System.out.println();
+					System.out.println("Parent: " + pcb.getParent().getName());
+				}
+				System.out.print("Children: ");
+				for (PCB p: pcb.getChildren()){
+					System.out.print(p.getName() + ", ");
+				}
+				System.out.println("\n");
+			}
 		}
+	}
+	
+	public void printResources(){
+		printRCB(R1);
+		printRCB(R2);
+		printRCB(R3);
+		printRCB(R4);
+	}
+	
+	public void printRCB(RCB rcb){
+		System.out.println("Resources... ");
+		System.out.println("Name: " + rcb.getName());
+		System.out.println("Available Units: " + rcb.getAvailableUnits());
+		System.out.println("Status: " + rcb.getStatus());
+		System.out.println("WaitingList: ");
+		for (PCB pcb : rcb.getWL().keySet()){
+			System.out.println("Process Name: " + pcb.getName());
+		}
+		System.out.println();
+		
+		
 	}
 }

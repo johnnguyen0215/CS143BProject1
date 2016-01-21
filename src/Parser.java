@@ -105,6 +105,12 @@ public class Parser {
 				else if(arr[0].equals("to") && arr.length == 1){
 					to();
 				}
+				else if (arr[0].equals("pp") && arr.length == 1){
+					pp();
+				}
+				else if (arr[0].equals("pr") && arr.length == 1){
+					pr();
+				}
 				else if (input.equals("quit")){
 					running = false;
 				}
@@ -150,6 +156,14 @@ public class Parser {
 	
 	public void to(){
 		prManager.timeOut();
+	}
+	
+	public void pp(){
+		prManager.printProcesses();
+	}
+	
+	public void pr(){
+		prManager.printResources();
 	}
 	
 	
