@@ -1,0 +1,12 @@
+init
+cr a 1
+cr b 1
+to
+cr c 1
+req R1 1
+de a
+init
+de b
+de a
+de c
+de init

@@ -1,8 +1,12 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Queue;
+/* Name: John Nguyen
+ * ID: 14419724
+ * Class: CS 143B
+ * Date: 1/6/2016
+ */
 
+
+import java.util.ArrayList; 
+import java.util.HashMap;
 
 // Encapsulates a process
 
@@ -57,9 +61,14 @@ public class PCB {
 		resources.put(resource, units);
 	}
 	
-	public void removeResource(RCB resource){
-		resource.incAvailableUnits(resources.get(resource));
-		resources.remove(resource);
+	public void removeResource(RCB resource, int units){
+		int allocated = resources.get(resource);
+		if (units >= allocated){
+			resources.remove(resource);
+		}
+		else{
+			resources.put(resource, allocated-1);
+		}
 	}
 	
 	public void setType(String type){

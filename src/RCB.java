@@ -1,8 +1,11 @@
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashMap;
-import java.util.Queue;
+/* Name: John Nguyen
+ * ID: 14419724
+ * Class: CS 143B
+ * Date: 1/6/2016
+ */
 
+
+import java.util.LinkedHashMap;
 
 public class RCB {
 	private String name;
@@ -68,18 +71,13 @@ public class RCB {
 		return waitingList.keySet().iterator().next();
 	}
 	
-	public PCB popFromWL(){
-		PCB pcb;
-		pcb = peakWL();
-		waitingList.remove(pcb);
-		return pcb;
-	}
-	
-	public void removeProcess(PCB pcb){
-		System.out.println("removing process");
-		System.out.println(pcb.getResources().get(this));
-		incAvailableUnits(pcb.getResources().get(this));
-		waitingList.remove(pcb);
+	public int removeFromWL(PCB pcb){
+		int units = 0;
+		if (waitingList.containsKey(pcb)){
+			units = waitingList.get(pcb);
+			waitingList.remove(pcb);
+		}
+		return units;
 	}
 	
 	public void setStatus(String status){
